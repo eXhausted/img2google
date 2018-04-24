@@ -38,12 +38,12 @@ class ScreenshotMonitor {
         }
         
         let streamCallback: FSEventStreamCallback = {
-            (streamRef: ConstFSEventStreamRef,
-            clientCallBackInfo: UnsafeMutableRawPointer?,
-            numEvents: Int,
-            eventPaths: UnsafeMutableRawPointer,
-            eventFlags: UnsafePointer<FSEventStreamEventFlags>?,
-            eventIds: UnsafePointer<FSEventStreamEventId>?) in
+            streamRef,
+            clientCallBackInfo,
+            numEvents,
+            eventPaths,
+            eventFlags,
+            eventIds in
             
             guard let eventPaths = Unmanaged<NSArray>
                 .fromOpaque(eventPaths)

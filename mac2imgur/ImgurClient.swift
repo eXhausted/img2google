@@ -18,7 +18,7 @@ import Foundation
 import ImgurSession
 import Crashlytics
 
-class ImgurClient: NSObject, IMGSessionDelegate {
+class ImgurClient: NSObject, IMGSessionDelegate, ImageClient {
     
     static let shared = ImgurClient()
     

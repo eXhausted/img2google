@@ -28,8 +28,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var hasFinishedLaunching = false
     var queuedFileURLs = [URL]()
+    let imageClient: ImageClient
     
     // MARK: NSApplicationDelegate
+    
+    override init() {
+        imageClient = ImgurClient.shared
+        super.init()
+    }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         
@@ -51,7 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         Fabric.with([Crashlytics.self])
         
         // Setup ImgurClient
-        ImgurClient.shared.setup()
+        imageClient.setup()
         
         // Monitor for new screenshots
         screenshotMonitor = ScreenshotMonitor(eventHandler: screenshotEventHandler)
@@ -77,7 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hasFinishedLaunching = true
         
         queuedFileURLs.forEach {
-            ImgurClient.shared.uploadImage(withURL: $0, isScreenshot: false)
+            imageClient.uploadImage(withURL: $0, isScreenshot: false)
         }
     }
     
@@ -85,7 +91,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let fileURL = URL(fileURLWithPath: filename)
         
         if hasFinishedLaunching {
-            ImgurClient.shared.uploadImage(withURL: fileURL, isScreenshot: false)
+            imageClient.uploadImage(withURL: fileURL, isScreenshot: false)
         } else {
             queuedFileURLs.append(fileURL)
         }
@@ -100,7 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: ScreenshotMonitor Event Handler
     
     func screenshotEventHandler(url: URL) {
-        ImgurClient.shared.uploadImage(withURL: url, isScreenshot: true)
+        imageClient.uploadImage(withURL: url, isScreenshot: true)
     }
     
     // MARK: NSAppleEventManager Event Handler
@@ -113,8 +119,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 return
         }
         
-        ImgurClient.shared.handleExternalWebViewEvent(withResponseURL: url)
+        imageClient.handleExternalWebViewEvent(withResponseURL: url)
     }
 
+}
+
+protocol ImageClient {
+    func setup()
+    func uploadImage(withURL imageURL: URL, isScreenshot: Bool)
+    func handleExternalWebViewEvent(withResponseURL url: URL)
 }
 
